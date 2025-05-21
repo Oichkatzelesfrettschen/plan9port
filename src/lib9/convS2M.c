@@ -198,6 +198,18 @@ sizeS2M(Fcall *f)
 }
 
 uint
+convS2M_hdr(Fcall *f, uchar *ap, uint nap)
+{
+	if(nap < BIT32SZ+BIT8SZ+BIT16SZ)
+		return 0;
+	PBIT32(ap, 0);
+	PBIT8(ap+BIT32SZ, f->type);
+	PBIT16(ap+BIT32SZ+BIT8SZ, f->tag);
+	return BIT32SZ+BIT8SZ+BIT16SZ;
+}
+
+
+uint
 convS2M(Fcall *f, uchar *ap, uint nap)
 {
 	uchar *p;
