@@ -249,6 +249,10 @@ threadmain(int argc, char *argv[])
 		close(p[0]);	/* don't deadlock if child fails */
                if(srvpost){
                        sprint(srvfile, "/srv/upasfs.%s", user);
+                       post9pservice(p[1], "upasfs", nil);
+               } else {
+                       if(post9pservice(p[1], nil, mntpt) < 0)
+                               error("mount failed");
                        /* post(srvfile, "upasfs", p[1]);  jpc */
                        post9pservice(p[1], "upasfs", nil);   /* jpc */
                } else {

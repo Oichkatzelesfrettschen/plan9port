@@ -55,3 +55,6 @@ exists, Acme Mail will save your a copy of your outgoing messages
 there.  Attachments are described in the copy but not included.
 
 The -m mntpoint flag specifies a different mount point for /upas/fs.
+The -s flag causes upas/fs to post a service named /srv/upasfs.$user
+instead of mounting it.  Without -s, upas/fs mounts the file system
+at the chosen mount point.
