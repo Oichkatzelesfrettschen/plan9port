@@ -142,7 +142,7 @@ int	logging;
 void
 usage(void)
 {
-	fprint(2, "usage: %s [-b -m mountpoint]\n", argv0);
+       fprint(2, "usage: %s [-b] [-s] [-m mountpoint]\n", argv0);
 	threadexits("usage");
 }
 
@@ -247,15 +247,14 @@ threadmain(int argc, char *argv[])
 		break;
 	default:
 		close(p[0]);	/* don't deadlock if child fails */
-		if(srvpost){
-			sprint(srvfile, "/srv/upasfs.%s", user);
-			/* post(srvfile, "upasfs", p[1]);  jpc */
-			post9pservice(p[1], "upasfs", nil);   /* jpc */
-		} else {
-			error("tried to mount, fixme");     /* jpc */
-			/* if(mount(p[1], -1, mntpt, MREPL, "") < 0)
-				error("mount failed");   jpc */
-		}
+               if(srvpost){
+                       sprint(srvfile, "/srv/upasfs.%s", user);
+                       /* post(srvfile, "upasfs", p[1]);  jpc */
+                       post9pservice(p[1], "upasfs", nil);   /* jpc */
+               } else {
+                       if(mount(p[1], -1, mntpt, MREPL, "") < 0)
+                               sysfatal("mount %s: %r", mntpt);
+               }
 	}
 	threadexits(0);
 }
