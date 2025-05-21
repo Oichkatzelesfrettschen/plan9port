@@ -1,0 +1,31 @@
+.TH UPASFS 1
+.SH NAME
+upasfs \- serve a mailbox as a file system
+.SH SYNOPSIS
+.B upas/fs
+[
+.B -s
+]
+[
+.B -m
+.I mtpt
+]
+[
+.B -f
+.I mailbox
+]
+.SH DESCRIPTION
+.I Upasfs
+parses mailboxes and presents their contents through a 9P
+file system.  When invoked without
+.B -s
+it mounts itself on
+.BR /mail/fs
+or on the directory specified by
+.BR -m .
+With
+.B -s
+it posts the service
+.B upasfs
+in
+.BR /srv .

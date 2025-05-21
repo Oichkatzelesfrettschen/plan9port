@@ -101,17 +101,18 @@ msgFree(Msg* m)
 	assert(m->flush == nil);
 
 	qlock(&mbox.alock);
-	if(mbox.nmsg > mbox.maxmsg){
-		vtfree(m->data);
-		vtfree(m);
-		mbox.nmsg--;
-		qunlock(&mbox.alock);
-		return;
-	}
-	m->anext = mbox.ahead;
-	mbox.ahead = m;
-	if(m->anext == nil)
-		rwakeup(&mbox.arendez);
+        if(mbox.nmsg > mbox.maxmsg){
+                vtfree(m->data);
+                vtfree(m);
+                mbox.nmsg--;
+                qunlock(&mbox.alock);
+                return;
+        }
+        m->anext = mbox.ahead;
+        mbox.ahead = m;
+       m->len = 0;
+        if(m->anext == nil)
+                rwakeup(&mbox.arendez);
 	qunlock(&mbox.alock);
 }
 
@@ -139,9 +140,10 @@ msgAlloc(Con* con)
 	m->anext = nil;
 	qunlock(&mbox.alock);
 
-	m->con = con;
-	m->state = MsgR;
-	m->nowq = 0;
+       m->con = con;
+       m->state = MsgR;
+       m->nowq = 0;
+       m->len = 0;
 
 	return m;
 }
@@ -483,6 +485,17 @@ msgWrite(void* v)
                                        eof = 1;
 
 				qlock(&con->mlock);
+                               if(m->len > 0){
+                                       n = m->len;
+                                       if(write(con->fd, m->data, n) != n)
+                                               eof = 1;
+                               }else{
+                                       n = convS2M(&m->r, con->data, con->msize);
+                                       if(write(con->fd, con->data, n) != n)
+                                               eof = 1;
+                               }
+
+                               qlock(&con->mlock);
 			}
 
 			if((flush = m->flush) != nil){

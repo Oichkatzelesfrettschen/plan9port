@@ -115,6 +115,7 @@ enum
 
 uint	convM2S(uchar*, uint, Fcall*);
 uint	convS2M(Fcall*, uchar*, uint);
+uint    convS2M_hdr(Fcall*, uchar*, uint);
 uint	sizeS2M(Fcall*);
 
 int	statcheck(uchar *abuf, uint nbuf);

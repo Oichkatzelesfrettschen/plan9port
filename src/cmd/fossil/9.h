@@ -22,6 +22,7 @@ struct Msg {
 	Fcall	t;
 	Fcall	r;
 	Con*	con;
+	int	len;				/* preformatted packet length */
 
 	Msg*	anext;			/* allocation free list */
 
