@@ -2,6 +2,9 @@
 #include	<libc.h>
 #include	<fcall.h>
 
+uint convS2M_hdr(Fcall*, uchar*, uint);
+static uint convS2Mu(Fcall*, uchar*, uint, int, int);
+
 static
 uchar*
 pstring(uchar *p, char *s)
@@ -196,6 +199,8 @@ sizeS2M(Fcall *f)
 	}
 	return n;
 }
+static uint convS2Mu(Fcall *f, uchar *ap, uint nap, int off, int copydata)
+
 
 uint
 convS2M_hdr(Fcall *f, uchar *ap, uint nap)
@@ -211,6 +216,7 @@ convS2M_hdr(Fcall *f, uchar *ap, uint nap)
 
 uint
 convS2M(Fcall *f, uchar *ap, uint nap)
+ master
 {
 	uchar *p;
 	uint i, size;
@@ -221,7 +227,7 @@ convS2M(Fcall *f, uchar *ap, uint nap)
 	if(size > nap)
 		return 0;
 
-	p = (uchar*)ap;
+	p = (uchar*)ap+off;
 
 	PBIT32(p, size);
 	p += BIT32SZ;
@@ -309,7 +315,7 @@ convS2M(Fcall *f, uchar *ap, uint nap)
 		p += BIT64SZ;
 		PBIT32(p, f->count);
 		p += BIT32SZ;
-		memmove(p, f->data, f->count);
+if(copydata) 		memmove(p, f->data, f->count);
 		p += f->count;
 		break;
 
@@ -329,7 +335,7 @@ convS2M(Fcall *f, uchar *ap, uint nap)
 		p += BIT32SZ;
 		PBIT16(p, f->nstat);
 		p += BIT16SZ;
-		memmove(p, f->stat, f->nstat);
+if(copydata) 		memmove(p, f->stat, f->nstat);
 		p += f->nstat;
 		break;
 /*
@@ -380,7 +386,7 @@ convS2M(Fcall *f, uchar *ap, uint nap)
 	case Rread:
 		PBIT32(p, f->count);
 		p += BIT32SZ;
-		memmove(p, f->data, f->count);
+if(copydata) 		memmove(p, f->data, f->count);
 		p += f->count;
 		break;
 
@@ -398,14 +404,27 @@ convS2M(Fcall *f, uchar *ap, uint nap)
 	case Rstat:
 		PBIT16(p, f->nstat);
 		p += BIT16SZ;
-		memmove(p, f->stat, f->nstat);
+if(copydata) 		memmove(p, f->stat, f->nstat);
 		p += f->nstat;
 		break;
 
 	case Rwstat:
 		break;
 	}
-	if(size != p-ap)
+	if(size != p-(ap+off))
 		return 0;
 	return size;
 }
+
+uint
+convS2M(Fcall *f, uchar *ap, uint nap)
+{
+    return convS2Mu(f, ap, nap, 0, 1);
+}
+
+uint
+convS2M_hdr(Fcall *f, uchar *ap, uint nap)
+{
+    return convS2Mu(f, ap, nap, 0, 0);
+}
+
