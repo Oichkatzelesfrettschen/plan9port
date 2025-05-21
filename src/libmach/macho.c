@@ -166,17 +166,18 @@ macholoadrel(Macho *m, MachoSect *sect)
 		p = buf+i*8;
 		r->addr = m->e4(p);
 
-		// TODO(rsc): Wrong interpretation for big-endian bitfields?
+	/*
+		 * r_info layout (bits 31..0):
+		 * [r_type:4][r_extern:1][r_length:2][r_pcrel:1][r_symbolnum:24]
+		 * After loading with m->e4 the word is in host byte order, so
+		 * bit extraction works for both little and big endian files.
+		 */
 		v = m->e4(p+4);
+		r->type = v>>28;
+		r->extrn = (v>>27)&1;
+		r->length = 1<<((v>>25)&3);
+		r->pcrel = (v>>24)&1;
 		r->symnum = v & 0xFFFFFF;
-		v >>= 24;
-		r->pcrel = v&1;
-		v >>= 1;
-		r->length = 1<<(v&3);
-		v >>= 2;
-		r->extrn = v&1;
-		v >>= 1;
-		r->type = v;
 	}
 	sect->rel = rel;
 	free(buf);
