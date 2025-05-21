@@ -3,6 +3,7 @@
 #include "9.h"
 #include "dat.h"
 #include "fns.h"
+#include <sys/uio.h>
 
 enum {
 	NConInit	= 128,
@@ -462,9 +463,24 @@ msgWrite(void* v)
 				m->state = MsgW;
 				qunlock(&con->mlock);
 
-				n = convS2M(&m->r, con->data, con->msize);
-				if(write(con->fd, con->data, n) != n)
-					eof = 1;
+                               n = convS2M_hdr(&m->r, con->data, con->msize);
+                               struct iovec iov[2];
+                               int nv = 1;
+                               iov[0].iov_base = con->data;
+                               iov[0].iov_len = n;
+                               if(m->r.type == Rread){
+                                       iov[0].iov_len -= m->r.count;
+                                       iov[1].iov_base = m->r.data;
+                                       iov[1].iov_len = m->r.count;
+                                       nv = 2;
+                               }else if(m->r.type == Rstat){
+                                       iov[0].iov_len -= m->r.nstat;
+                                       iov[1].iov_base = m->r.stat;
+                                       iov[1].iov_len = m->r.nstat;
+                                       nv = 2;
+                               }
+                               if(writev(con->fd, iov, nv) != n)
+                                       eof = 1;
 
 				qlock(&con->mlock);
 			}

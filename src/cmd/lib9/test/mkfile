@@ -1,0 +1,7 @@
+<$PLAN9/src/mkhdr
+
+SHORTLIB=9
+TARG=convtest
+OFILES=convtest.$O
+
+<$PLAN9/src/mkone
