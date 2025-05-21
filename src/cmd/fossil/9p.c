@@ -385,9 +385,11 @@ error0:
 static int
 rTstat(Msg* m)
 {
-	Dir dir;
-	Fid *fid;
-	DirEntry de;
+       Dir dir;
+       Fid *fid;
+       DirEntry de;
+       uchar *p;
+       int n;
 
 	if((fid = fidGet(m->con, m->t.fid, 0)) == nil)
 		return 0;
@@ -403,15 +405,22 @@ rTstat(Msg* m)
 		dir.gid = fid->uname;
 		dir.muid = fid->uname;
 
-		if((m->r.nstat = convD2M(&dir, m->data, m->con->msize)) == 0){
-			werrstr("stat QTAUTH botch");
-			fidPut(fid);
-			return 0;
-		}
-		m->r.stat = m->data;
+               p = m->data + IOHDRSZ;
+               n = convD2M(&dir, p, m->con->msize - IOHDRSZ);
+               if(n == 0){
+                       werrstr("stat QTAUTH botch");
+                       fidPut(fid);
+                       return 0;
+               }
+               m->r.type = Rstat;
+               m->r.tag = m->t.tag;
+               m->r.nstat = n;
+               m->r.stat = p;
+               m->len = convS2M_hdr(&m->r, m->data, m->con->msize);
+               m->len += n;
 
-		fidPut(fid);
-		return 1;
+               fidPut(fid);
+               return 1;
 	}
 	if(!fileGetDir(fid->file, &de)){
 		fidPut(fid);
@@ -419,15 +428,18 @@ rTstat(Msg* m)
 	}
 	fidPut(fid);
 
-	/*
-	 * TODO: optimise this copy (in convS2M) away somehow.
-	 * This pettifoggery with m->data will do for the moment.
-	 */
-	m->r.nstat = dirDe2M(&de, m->data, m->con->msize);
-	m->r.stat = m->data;
-	deCleanup(&de);
+       /* build stat response directly in m->data */
+       p = m->data + IOHDRSZ;
+       n = dirDe2M(&de, p, m->con->msize - IOHDRSZ);
+       m->r.type = Rstat;
+       m->r.tag = m->t.tag;
+       m->r.nstat = n;
+       m->r.stat = p;
+       m->len = convS2M_hdr(&m->r, m->data, m->con->msize);
+       m->len += n;
+       deCleanup(&de);
 
-	return 1;
+       return 1;
 }
 
 static int
@@ -543,22 +555,22 @@ rTread(Msg* m)
 	if(fid->excl != nil && !exclUpdate(fid))
 		goto error;
 
-	/*
-	 * TODO: optimise this copy (in convS2M) away somehow.
-	 * This pettifoggery with m->data will do for the moment.
-	 */
-	data = m->data+IOHDRSZ;
-	if(fid->qid.type & QTDIR)
-		n = dirRead(fid, data, count, m->t.offset);
-	else if(fid->qid.type & QTAUTH)
-		n = authRead(fid, data, count);
-	else
-		n = fileRead(fid->file, data, count, m->t.offset);
-	if(n < 0)
-		goto error;
+       data = m->data + IOHDRSZ;
+       if(fid->qid.type & QTDIR)
+               n = dirRead(fid, data, count, m->t.offset);
+       else if(fid->qid.type & QTAUTH)
+               n = authRead(fid, data, count);
+       else
+               n = fileRead(fid->file, data, count, m->t.offset);
+       if(n < 0)
+               goto error;
 
-	m->r.count = n;
-	m->r.data = (char*)data;
+       m->r.type = Rread;
+       m->r.tag = m->t.tag;
+       m->r.count = n;
+       m->r.data = (char*)data;
+       m->len = convS2M_hdr(&m->r, m->data, m->con->msize);
+       m->len += n;
 
 	fidPut(fid);
 	return 1;

@@ -151,3 +151,19 @@ void machoclose(Macho*);
 int coreregsmachopower(Macho*, uchar**);
 int macholoadrel(Macho*, MachoSect*);
 int macholoadsym(Macho*, MachoSymtab*);
+
+/*
+ * Helpers for decoding relocation entries.
+ * The Mach-O format stores relocation words in big- or little-endian
+ * order depending on the target architecture.  The high 4 bits contain
+ * the relocation type followed by the extern bit, the length field,
+ * the pc-relative bit and finally the 24-bit symbol/section number.
+ */
+#define MACHO_READ32BE(p)     beload4(p)
+#define MACHO_READ32LE(p)     leload4(p)
+
+#define MACHO_R_SYMNUM(v)     ((v) & 0x00FFFFFF)
+#define MACHO_R_PCREL(v)      (((v) >> 24) & 0x1)
+#define MACHO_R_LENGTH(v)     (((v) >> 25) & 0x3)
+#define MACHO_R_EXTERN(v)     (((v) >> 27) & 0x1)
+#define MACHO_R_TYPE(v)       (((v) >> 28) & 0xF)

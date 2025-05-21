@@ -161,10 +161,10 @@ macholoadrel(Macho *m, MachoSect *sect)
 		free(buf);
 		return -1;
 	}
-	for(i=0; i<sect->nreloc; i++) {
-		r = &rel[i];
-		p = buf+i*8;
-		r->addr = m->e4(p);
+       for(i=0; i<sect->nreloc; i++) {
+               r = &rel[i];
+               p = buf+i*8;
+               r->addr = m->e4(p);
 
 	/*
 		 * r_info layout (bits 31..0):
@@ -179,6 +179,13 @@ macholoadrel(Macho *m, MachoSect *sect)
 		r->pcrel = (v>>24)&1;
 		r->symnum = v & 0xFFFFFF;
 	}
+               v = m->e4(p+4);
+               r->symnum = MACHO_R_SYMNUM(v);
+               r->pcrel = MACHO_R_PCREL(v);
+               r->length = 1 << MACHO_R_LENGTH(v);
+               r->extrn = MACHO_R_EXTERN(v);
+               r->type = MACHO_R_TYPE(v);
+       }
 	sect->rel = rel;
 	free(buf);
 	return 0;
