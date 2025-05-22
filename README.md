@@ -12,6 +12,7 @@ using `clang` and the C23 standard. Configure it with:
 ```sh
 meson setup build && ninja -C build
 ```
+The sample program `c23hello` demonstrates a minimal C23 executable.
 
 For more details, see install(1), at install.txt in this directory
 and at https://9fans.github.io/plan9port/man/man1/install.html.
