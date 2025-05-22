@@ -3,8 +3,15 @@ This is a port of many Plan 9 libraries and programs to Unix.
 Installation
 ------------
 
-To install, run ./INSTALL.  It builds mk and then uses mk to
-run the rest of the installation.
+To install using the traditional Plan 9 build system, run `./INSTALL`.
+This builds `mk` and then uses it to compile everything else.
+
+Alternatively, a minimal Meson build is provided for modern toolchains
+using `clang` and the C23 standard. Configure it with:
+
+```sh
+meson setup build && ninja -C build
+```
 
 For more details, see install(1), at install.txt in this directory
 and at https://9fans.github.io/plan9port/man/man1/install.html.
