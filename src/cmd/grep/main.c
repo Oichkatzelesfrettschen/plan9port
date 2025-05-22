@@ -1,6 +1,17 @@
 #define	EXTERN
 #include	"grep.h"
 
+static inline void memmovesafe(void *d, size_t ds, const void *s, size_t n)
+{
+#if __STDC_LIB_EXT1__
+       memmove_s(d, ds, s, n);
+#else
+       if(n > ds)
+               n = ds;
+       memmove(d, s, n); /* NOLINT(clang-analyzer-security.DeprecatedOrUnsafeBufferHandling) */
+#endif
+}
+
 char *validflags = "bchiLlnsv";
 void
 usage(void)
@@ -129,7 +140,8 @@ loop0:
 	n = lp-bol;
 	if(n > sizeof(u.u.pre))
 		n = sizeof(u.u.pre);
-	memmove(u.u.buf-n, bol, n);
+
+       memmovesafe(u.u.buf-n, sizeof(u.u.buf), bol, n);
 	bol = u.u.buf-n;
 	n = read(fid, u.u.buf, sizeof(u.u.buf));
 	/* if file has no final newline, simulate one to emit matches to last line */
