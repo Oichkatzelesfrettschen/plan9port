@@ -13,6 +13,12 @@ using `clang` and the C23 standard. Configure it with:
 meson setup build && ninja -C build
 ```
 
+For development consistency run `pre-commit install` to set up
+formatting checks.  Invoke clang-tidy with `ninja -C build tidy`
+for Meson or `mk tidy` in the `src` directory when using the
+Plan9 `mk` build system. The mk tidy target enables clang-tidy by
+setting the `RUN_CLANG_TIDY` environment variable.
+
 For more details, see install(1), at install.txt in this directory
 and at https://9fans.github.io/plan9port/man/man1/install.html.
 

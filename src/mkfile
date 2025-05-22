@@ -55,5 +55,9 @@ testcvs:V:
 	mv ../bin/mk ../bin/_mk
 	rm ../bin/*
 	PLAN9="`pwd`/.." export PLAN9
-	PATH=$PLAN9/bin:$PATH export PATH
+        PATH=$PLAN9/bin:$PATH export PATH
+
+tidy:V:
+        RUN_CLANG_TIDY=1 mk libs-all
+        (cd cmd && RUN_CLANG_TIDY=1 mk all)
 
