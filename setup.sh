@@ -18,6 +18,12 @@ done
 
 apt-get update -y
 
+# Use clang and modern C23 standard by default
+export CC=clang
+export CXX=clang++
+export CFLAGS="-std=c23"
+export CXXFLAGS="-std=c++23"
+
 for pkg in \
   build-essential gcc g++ clang lld llvm \
   clang-format uncrustify astyle editorconfig pre-commit \
