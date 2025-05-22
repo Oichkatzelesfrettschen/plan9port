@@ -18,6 +18,16 @@ done
 
 apt-get update -y
 
+# Ensure meson is available regardless of apt repository state
+meson_install() {
+  if ! command -v meson >/dev/null 2>&1; then
+    # Try apt first. If apt doesn't provide meson, fall back to pip.
+    if ! apt-get install -y meson >/dev/null 2>&1; then
+      pip3 install --no-cache-dir meson
+    fi
+  fi
+}
+
 # Use clang and modern C23 standard by default
 export CC=clang
 export CXX=clang++
@@ -126,6 +136,16 @@ unzip -d /usr/local /tmp/protoc.zip
 rm /tmp/protoc.zip
 
 command -v gmake >/dev/null 2>&1 || ln -s "$(command -v make)" /usr/local/bin/gmake
+
+# Install meson now that dependencies are available
+meson_install
+
+# Run a minimal build to ensure toolchain works
+if command -v meson >/dev/null 2>&1; then
+  meson setup build
+  ninja -C build
+  rm -rf build
+fi
 
 apt-get clean
 rm -rf /var/lib/apt/lists/*
