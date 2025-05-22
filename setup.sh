@@ -35,8 +35,9 @@ export CFLAGS="-std=c23"
 export CXXFLAGS="-std=c++23"
 
 for pkg in \
-  build-essential gcc g++ clang lld llvm \
-  clang-format uncrustify astyle editorconfig pre-commit \
+  build-essential gcc g++ clang lld llvm llvm-dev libclang-dev \
+  clangd clang-tidy clang-format clang-tools \
+  uncrustify astyle editorconfig pre-commit \
   make bmake ninja-build cmake meson \
   autoconf automake libtool m4 gawk flex bison byacc \
   pkg-config file ca-certificates curl git unzip \
@@ -120,7 +121,7 @@ done
 
 for pkg in \
   docker.io podman buildah virt-manager libvirt-daemon-system qemu-kvm \
-  gdb lldb perf gcovr lcov bcc-tools bpftrace \
+  gdb lldb perf gcovr lcov bcc-tools bpftrace afl++ american-fuzzy-lop bear \
   openmpi-bin libopenmpi-dev mpich; do
   apt_pin_install "$pkg"
 done
