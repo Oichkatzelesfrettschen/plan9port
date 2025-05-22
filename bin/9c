@@ -150,6 +150,9 @@ esac
 
 # Must use temp file to avoid pipe; pipe loses status.
 xtmp=${TMPDIR-/tmp}/9c.$$.$USER.out
+if [ -n "$RUN_CLANG_TIDY" ] && command -v clang-tidy >/dev/null; then
+    clang-tidy "$@" -- -DPLAN9PORT -I"$PLAN9/include" $cflags || true
+fi
 $cc -DPLAN9PORT -I"$PLAN9/include" $cflags "$@" 2>"$xtmp"
 status=$?
 quiet "$xtmp"

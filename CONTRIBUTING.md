@@ -1,3 +1,6 @@
 Plan 9 from User Space accepts GitHub pull requests.
 
 For details, see the general [GitHub documentation](https://help.github.com/articles/creating-a-pull-request/).
+
+Before sending patches run `pre-commit install` once and use the provided
+hooks to format code and run clang-tidy checks.
