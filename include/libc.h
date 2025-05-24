@@ -769,7 +769,7 @@ extern	int	notifyon(char*);
 extern	int	notifyoff(char*);
 extern	int	p9open(char*, int);
 extern	int	fd2path(int, char*, int);
-extern	int	p9pipe(int*);
+extern	int	p9pipe(int fd[2]);
 /*
  * use defs from <unistd.h>
 extern	long	pread(int, void*, long, vlong);
