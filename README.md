@@ -4,7 +4,9 @@ Installation
 ------------
 
 To install using the traditional Plan 9 build system, run `./INSTALL`.
-This builds `mk` and then uses it to compile everything else.
+This builds `mk` and then uses it to compile everything else. Pass
+`-a <arch>` to override the detected architecture (for example
+`amd64`, `386`, or `ia16`).
 
 Alternatively, a minimal Meson build is provided for modern toolchains
 using `clang` and the C23 standard. Configure it with:
