@@ -22,6 +22,7 @@ jobs:
           - { id: "black", cmd: "black --check --diff ." }
           - { id: "golangci", cmd: "golangci-lint run --out-format=checkstyle" }
           - { id: "ruff", cmd: "ruff --output-format=github ." }
+          - { id: "clang-tidy", cmd: "clang-tidy $(git ls-files '*.c' '*.h') || true" }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -29,7 +30,7 @@ jobs:
       - name: Install linter runtime deps
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y shellcheck
+          sudo apt-get install -y shellcheck clang clang-tidy
       - name: Run ${{ matrix.linter.id }} & feed Reviewdog
         uses: reviewdog/reviewdog@master
         with:
