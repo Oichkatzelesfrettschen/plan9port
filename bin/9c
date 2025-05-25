@@ -30,6 +30,13 @@ usegcc()
 	cflags="$cflags $CC9FLAGS"
 }
 
+useia16()
+{
+    cc=${CC9:-ia16-elf-gcc}
+    cflags="-c -Os"
+    cflags="$cflags $CC9FLAGS"
+}
+
 quiet()
 {
 	# The uniq at the end is for gcc's strcmp/etc. built-in nonsense,
@@ -108,6 +115,9 @@ usexlc()
 
 tag="${SYSNAME:-`uname`}-${CC9:-cc}"
 case "$tag" in
+*-ia16-elf-gcc*)
+       useia16
+       ;;
 *DragonFly*gcc*|*BSD*gcc*)	usegcc ;;
 *DragonFly*clang|*BSD*clang*)	useclang ;;
 *Darwin*)

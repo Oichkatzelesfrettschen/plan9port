@@ -12,6 +12,9 @@ verbose=false
 nmflags=""
 extralibs="-lm"
 tag="${SYSNAME:-`uname`}"
+if echo "${CC9:-gcc}" | grep -q ia16-elf-gcc; then
+       ld="${CC9:-ia16-elf-gcc} $CC9FLAGS"
+else
 case "$tag" in
 *DragonFly*|*BSD*)
 	ld="${CC9:-gcc} $CC9FLAGS"
@@ -67,6 +70,7 @@ case "$tag" in
 	echo do not know how to link on "$tag" 1>&2
 	exit 1
 esac
+fi
 
 if [ "x$1" = "x-l" ]
 then

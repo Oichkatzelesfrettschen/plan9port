@@ -18,6 +18,7 @@ SYSNAME=`uname`
 # 	s;.*alpha.*;alpha;g;
 # 	s;.*sun4u.*;sun4u;g;
 # 	s;.*aarch64.*;arm64;
-# 	s;.*arm64.*;arm64;
+#       s;.*arm64.*;arm64;
+#       s;.*ia16.*;ia16;
 # '`
 INSTALL=`[ $(uname) = AIX ] && echo installbsd || echo install`
