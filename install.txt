@@ -64,6 +64,10 @@
           ages are libfontconfig1-dev, libx11-dev, libxext-dev, and
           libxt-dev.  On Ubuntu, it suffices to install xorg-dev.
 
+          Building the ia16 tier requires the external ia16-elf-gcc
+          cross compiler.  Ensure this toolchain is installed and
+          visible in $PATH before running `INSTALL -a ia16`.
+
           INSTALL can safely be repeated to rebuild the system from
           scratch.
 

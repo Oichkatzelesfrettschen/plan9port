@@ -4,7 +4,10 @@ Installation
 ------------
 
 To install using the traditional Plan 9 build system, run `./INSTALL`.
-This builds `mk` and then uses it to compile everything else.
+This builds `mk` and then uses it to compile everything else. 64‑bit
+builds are the default and correspond to the project's tier 1 support.
+32‑bit binaries (tier 2) can be produced with `./INSTALL -a 386`. For
+experimental 16‑bit support (tier 3) use `./INSTALL -a ia16`.
 
 Alternatively, a minimal Meson build is provided for modern toolchains
 using `clang` and the C23 standard. Configure it with:
