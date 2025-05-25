@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Clean up any lingering mk processes on exit
+trap "pkill -TERM mk 2>/dev/null" EXIT
+
 dobuild=true
 doinstall=true
 OBJTYPE=
