@@ -2,26 +2,33 @@
 
 dobuild=true
 doinstall=true
+OBJTYPE=
 
-case "x$1" in
-x)
-	;;
-x-b)
-	dobuild=true
-	doinstall=false
-	;;
-x-c)
-	dobuild=false
-	doinstall=true
-	;;
-x-r)
-	shift
-	PLAN9_TARGET=$1
-	;;
-*)
-	echo 'usage: INSTALL [-b | -c] [-r path]' 1>&2
-	exit 1
-esac
+while [ $# -gt 0 ]; do
+        case "$1" in
+        -b)
+                dobuild=true
+                doinstall=false
+                ;;
+        -c)
+                dobuild=false
+                doinstall=true
+                ;;
+        -r)
+                shift
+                PLAN9_TARGET=$1
+                ;;
+        -a)
+                shift
+                OBJTYPE=$1
+                ;;
+        *)
+                echo 'usage: INSTALL [-b | -c] [-r path] [-a arch]' 1>&2
+                exit 1
+                ;;
+        esac
+        shift
+done
 
 PLAN9=`pwd` export PLAN9
 
@@ -36,6 +43,7 @@ PLAN9=`pwd` export PLAN9
 PATH=/bin:/usr/bin:$PLAN9/bin:$PATH export PATH
 [ -z "$PLAN9_TARGET" ] && PLAN9_TARGET="$PLAN9"
 export PLAN9_TARGET
+[ -n "$OBJTYPE" ] && export OBJTYPE
 
 case `uname` in
 SunOS)
@@ -71,7 +79,7 @@ DragonFly|*BSD)
 esac
 
 (
-if [ `uname` = SunOS ]; then
+if [ `uname` = SunOS ] && [ -z "$OBJTYPE" ]; then
 	# On Solaris x86, uname -p cannot be trusted.
 	echo "* Running on Solaris: checking architecture..."
 	case "$(isainfo -n)" in
@@ -89,7 +97,7 @@ if [ `uname` = SunOS ]; then
 	esac
 fi
 
-if [ `uname` = Darwin ]; then
+if [ `uname` = Darwin ] && [ -z "$OBJTYPE" ]; then
 	export NPROC=$(sysctl hw.ncpu | sed 's/hw.ncpu: //')
 	# On Darwin, uname -m -p cannot be trusted.
 	echo "* Running on Darwin..."
