@@ -18,13 +18,10 @@ done
 
 apt-get update -y
 
-# Ensure meson is available regardless of apt repository state
+# Ensure meson is installed via apt
 meson_install() {
   if ! command -v meson >/dev/null 2>&1; then
-    # Try apt first. If apt doesn't provide meson, fall back to pip.
-    if ! apt-get install -y meson >/dev/null 2>&1; then
-      pip3 install --no-cache-dir meson
-    fi
+    apt_pin_install meson
   fi
 }
 
