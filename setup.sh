@@ -1,22 +1,49 @@
 #!/usr/bin/env bash
+# A "living" environment setup script. It installs development tools using
+# apt, pip, npm or manual downloads. Failures are logged but the script
+# continues so that later steps can still run.
 set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
 
+# Debug output and logging
+LOGFILE="$(dirname "$0")/setup.log"
+exec > >(tee -a "$LOGFILE") 2>&1
+set -x
+
 apt_pin_install(){
   pkg="$1"
-  ver=$(apt-cache show "$pkg" 2>/dev/null | awk '/^Version:/{print $2; exit}')
+  ver=$(apt-cache show "$pkg" 2>/dev/null | awk '/^Version:/{print $2; exit}') || true
   if [ -n "$ver" ]; then
-    apt-get install -y "${pkg}=${ver}"
-  else
-    apt-get install -y "$pkg"
+    apt-get install -y "${pkg}=${ver}" && return
   fi
+  if apt-get install -y "$pkg"; then
+    return
+  fi
+  echo "APT install failed for $pkg" >&2
+  if pip3 install --no-cache-dir "$pkg"; then
+    return
+  fi
+  if npm install -g "$pkg" >/dev/null 2>&1; then
+    return
+  fi
+  case "$pkg" in
+    capnproto)
+      curl -fsSL -o /tmp/capnproto.tar.gz \
+        https://github.com/capnproto/capnproto/releases/download/v0.10.2/capnproto-c++-0.10.2.tar.gz && \
+        tar -xzf /tmp/capnproto.tar.gz -C /tmp && \
+        (cd /tmp/capnproto-c++-* && ./configure && make -j$(nproc) && make install) && \
+        rm -rf /tmp/capnproto* && return
+      ;;
+  esac
+  echo "Failed to install $pkg via all methods" >&2
 }
 
 for arch in i386 armel armhf arm64 riscv64 powerpc ppc64el ia64; do
   dpkg --add-architecture "$arch"
 done
 
-apt-get update -y
+apt-get update -y || true
+apt-get dist-upgrade -y || true
 
 # Ensure meson is installed via apt
 meson_install() {
@@ -33,7 +60,7 @@ export CXXFLAGS="-std=c++23"
 
 for pkg in \
   build-essential gcc g++ clang lld llvm llvm-dev libclang-dev \
-  clangd clang-tidy clang-format clang-tools \
+  clangd clang-tidy clang-format clang-tools shellcheck capnproto \
   uncrustify astyle editorconfig pre-commit \
   make bmake ninja-build cmake meson \
   autoconf automake libtool m4 gawk flex bison byacc \
@@ -42,7 +69,7 @@ for pkg in \
   strace ltrace linux-perf systemtap systemtap-sdt-dev crash \
   valgrind kcachegrind trace-cmd kernelshark \
   libasan6 libubsan1 likwid hwloc \
-  xorg-dev; do
+  xorg-dev graphviz doxygen; do
   apt_pin_install "$pkg"
 done
 
@@ -120,6 +147,13 @@ for pkg in \
   docker.io podman buildah virt-manager libvirt-daemon-system qemu-kvm \
   gdb lldb perf gcovr lcov bcc-tools bpftrace afl++ american-fuzzy-lop bear \
   openmpi-bin libopenmpi-dev mpich; do
+  apt_pin_install "$pkg"
+done
+
+# Formal verification and optimization tooling
+for pkg in \
+  coq coqide isabelle tla-tools \
+  llvm-bolt libpolly-17-dev; do
   apt_pin_install "$pkg"
 done
 
