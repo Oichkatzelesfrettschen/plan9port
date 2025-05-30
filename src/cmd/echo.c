@@ -1,38 +1,45 @@
-#include <u.h>
-#include <libc.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdbool.h>
 
-void
+/*
+ * Echo command rewritten using standard C17 libraries.
+ * Behaves similarly to the original Plan 9 implementation.
+ */
+int
 main(int argc, char *argv[])
 {
-	int nflag;
-	int i, len;
-	char *buf, *p;
+        bool nflag = false;            /* suppress trailing newline? */
+        int i;
+        int len = 1;                   /* space for final newline/terminator */
+        char *buf;
+        char *p;
 
-	nflag = 0;
-	if(argc > 1 && strcmp(argv[1], "-n") == 0)
-		nflag = 1;
+        if(argc > 1 && strcmp(argv[1], "-n") == 0)
+                nflag = true;
 
-	len = 1;
-	for(i = 1+nflag; i < argc; i++)
-		len += strlen(argv[i])+1;
+        for(i = 1 + nflag; i < argc; i++)
+                len += (int)strlen(argv[i]) + 1;
 
-	buf = malloc(len);
-	if(buf == 0)
-		exits("no memory");
+        buf = malloc((size_t)len);
+        if(buf == NULL)
+                return EXIT_FAILURE;
+        p = buf;
+        for(i = 1 + nflag; i < argc; i++){
+                strcpy(p, argv[i]);
+                p += strlen(p);
+                if(i < argc - 1)
+                        *p++ = ' ';
+        }
 
-	p = buf;
-	for(i = 1+nflag; i < argc; i++){
-		strcpy(p, argv[i]);
-		p += strlen(p);
-		if(i < argc-1)
-			*p++ = ' ';
-	}
+        if(!nflag)
+                *p++ = '\n';
 
-	if(!nflag)
-		*p++ = '\n';
+        if(write(STDOUT_FILENO, buf, p - buf) < 0)
+                perror("echo");
 
-	if(write(1, buf, p-buf) < 0)
-		fprint(2, "echo: write error: %r\n");
-
-	exits((char *)0);
+        free(buf);
+        return EXIT_SUCCESS;
 }

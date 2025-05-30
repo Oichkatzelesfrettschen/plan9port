@@ -33,7 +33,7 @@
 #include <u.h>
 #include <libc.h>
 
-#include "zoneinfo.h"
+#include "zoneinfo.hpp"
 
 static	char	dmsize[12] =
 {

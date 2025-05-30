@@ -8,7 +8,7 @@
  * Copyright © 2008 M. Teichgräber
  * Contributed under the MIT license used in the rest of the distribution.
  */
-#include "zoneinfo.h"
+#include "zoneinfo.hpp"
 
 static
 struct Zoneinfo

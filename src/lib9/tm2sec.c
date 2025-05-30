@@ -1,7 +1,7 @@
 #include <u.h>
 #include <libc.h>
 
-#include "zoneinfo.h"
+#include "zoneinfo.hpp"
 
 #define SEC2MIN 60L
 #define SEC2HOUR (60L*SEC2MIN)
