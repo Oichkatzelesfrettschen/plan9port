@@ -3,6 +3,7 @@
 #include <bio.h>
 #include <disk.h>
 #include <libsec.h>
+#include <stdint.h>
 #include "iso9660.h"
 
 ulong now;

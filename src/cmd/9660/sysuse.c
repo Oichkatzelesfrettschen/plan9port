@@ -10,6 +10,7 @@
 #include <libc.h>
 #include <bio.h>
 #include <libsec.h>
+#include <stdint.h>
 #include "iso9660.h"
 
 static long mode(Direc*, int);

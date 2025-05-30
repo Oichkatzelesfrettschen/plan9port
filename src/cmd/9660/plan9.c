@@ -2,6 +2,7 @@
 #include <libc.h>
 #include <bio.h>
 #include <libsec.h>
+#include <stdint.h>
 #include <disk.h>
 #include "iso9660.h"
 
