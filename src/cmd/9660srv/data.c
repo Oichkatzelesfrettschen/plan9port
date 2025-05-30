@@ -2,21 +2,18 @@
 #include <libc.h>
 #include <auth.h>
 #include <fcall.h>
+#include <stdint.h>
 #include "dat.h"
 #include "fns.h"
 
-char	Enonexist[] =	"file does not exist";
-char	Eperm[] =	"permission denied";
-char	Enofile[] =	"no file system specified";
-char	Eauth[] =	"authentication failed";
+char Enonexist[] = "file does not exist";
+char Eperm[] = "permission denied";
+char Enofile[] = "no file system specified";
+char Eauth[] = "authentication failed";
 
-char	*srvname = "9660";
-char	*deffile = 0;
+char *srvname = "9660";
+char *deffile = 0;
 
-extern Xfsub	isosub;
+extern Xfsub isosub;
 
-Xfsub*	xsublist[] =
-{
-	&isosub,
-	0
-};
+Xfsub *xsublist[] = {&isosub, 0};
