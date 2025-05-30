@@ -9,6 +9,7 @@
  * Also supports El Torito bootable CD spec.
  */
 
+#include <stdint.h>
 typedef struct Cdimg Cdimg;
 typedef struct Cdinfo Cdinfo;
 typedef struct Conform Conform;
