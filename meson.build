@@ -1,4 +1,5 @@
-project('plan9port', 'c', default_options: ['c_std=c23'])
+project('plan9port', ['c', 'cpp'],
+    default_options: ['c_std=c17', 'cpp_std=c++17'])
 cc = meson.get_compiler('c')
 if cc.get_id() != 'clang'
   warning('This project expects clang for best compatibility')
