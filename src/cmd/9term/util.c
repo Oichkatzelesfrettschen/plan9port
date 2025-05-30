@@ -7,6 +7,7 @@
 #include <keyboard.h>
 #include <frame.h>
 #include <fcall.h>
+#include <stdbool.h>
 #include "dat.h"
 #include "fns.h"
 
@@ -36,8 +37,8 @@ cvttorunes(char *p, int n, Rune *r, int *nb, int *nr, int *nulls)
 		}
 		if(*s)
 			s++;
-		else if(nulls)
-				*nulls = TRUE;
+               else if(nulls)
+                               *nulls = true;
 	}
 	*nb = (char*)q-p;
 	*nr = s-r;
@@ -94,12 +95,12 @@ isalnum(Rune c)
 	 * potentially an alphanumeric.
 	 */
 	if(c <= ' ')
-		return FALSE;
+               return false;
 	if(0x7F<=c && c<=0xA0)
-		return FALSE;
+               return false;
 	if(utfrune("!\"#$%&'()*+,-./:;<=>?@[\\]^`{|}~", c))
-		return FALSE;
-	return TRUE;
+               return false;
+       return true;
 }
 
 Rune*

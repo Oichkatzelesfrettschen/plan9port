@@ -1,4 +1,6 @@
 /* acid.h */
+#include <stdbool.h>
+#include <stdint.h>
 #undef OAPPEND
 
 enum

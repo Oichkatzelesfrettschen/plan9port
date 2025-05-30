@@ -7,6 +7,7 @@
 #include <keyboard.h>
 #include <frame.h>
 #include <fcall.h>
+#include <stdbool.h>
 #include "dat.h"
 #include "fns.h"
 
@@ -30,7 +31,7 @@ timerstop(Timer *t)
 void
 timercancel(Timer *t)
 {
-	t->cancel = TRUE;
+t->cancel = true;
 }
 
 static
@@ -119,7 +120,7 @@ timerstart(int dt)
 	}
 	t->next = nil;
 	t->dt = dt;
-	t->cancel = FALSE;
+        t->cancel = false;
 	sendp(ctimer, t);
 	return t;
 }

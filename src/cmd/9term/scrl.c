@@ -7,6 +7,7 @@
 #include <keyboard.h>
 #include <frame.h>
 #include <fcall.h>
+#include <stdbool.h>
 #include "dat.h"
 #include "fns.h"
 
@@ -132,7 +133,7 @@ wscroll(Window *w, int but)
 	h = s.max.y-s.min.y;
 	x = (s.min.x+s.max.x)/2;
 	oldp0 = ~0;
-	first = TRUE;
+    first = true;
 	do{
 		flushimage(display, 1);
 		if(w->mc.m.xy.x<s.min.x || s.max.x<=w->mc.m.xy.x){
@@ -156,7 +157,7 @@ wscroll(Window *w, int but)
 				else
 					p0 = w->nr*(y-s.min.y)/h;
 				if(oldp0 != p0)
-					wsetorigin(w, p0, FALSE);
+                                   wsetorigin(w, p0, false);
 				oldp0 = p0;
 				readmouse(&w->mc);
 				continue;
@@ -166,14 +167,14 @@ wscroll(Window *w, int but)
 			else
 				p0 = w->org+frcharofpt(&w->f, Pt(s.max.x, my));
 			if(oldp0 != p0)
-				wsetorigin(w, p0, TRUE);
+                           wsetorigin(w, p0, true);
 			oldp0 = p0;
 			/* debounce */
 			if(first){
 				flushimage(display, 1);
 				sleep(200);
 				nbrecv(w->mc.c, &w->mc.m);
-				first = FALSE;
+                           first = false;
 			}
 			wscrsleep(w, 100);
 		}

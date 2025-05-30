@@ -10,6 +10,7 @@
 #include <9pclient.h>
 #include <plumb.h>
 #include <complete.h>
+#include <stdbool.h>
 #include "dat.h"
 #include "fns.h"
 
@@ -139,7 +140,7 @@ fprint(2, "res %p %p\n", w->i, i);
 	if(move)
 		frsetrects(&w->f, r, w->i);
 	else{
-		frclear(&w->f, FALSE);
+            frclear(&w->f, false);
 		frinit(&w->f, r, w->f.font, w->i, cols);
 		wsetcols(w);
 		w->f.maxtab = maxtab*stringwidth(w->f.font, "0");
@@ -151,7 +152,7 @@ fprint(2, "res %p %p\n", w->i, i);
 	}
 	wborder(w, wscale(w, Selborder));
 	w->topped = ++topped;
-	w->resized = TRUE;
+    w->resized = true;
 	w->mouse.counter++;
 }
 
@@ -298,7 +299,7 @@ winctl(void *arg)
 					if(++w->mouse.wi == nelem(w->mouse.queue))
 						w->mouse.wi = 0;
 					if(w->mouse.wi == w->mouse.ri)
-						w->mouse.qfull = TRUE;
+                                            w->mouse.qfull = true;
 					mp->m = w->mc.m;
 					mp->counter = w->mouse.counter;
 					lastb = w->mc.m.buttons;
@@ -310,7 +311,7 @@ winctl(void *arg)
 			/* send a queued event or, if the queue is empty, the current state */
 			/* if the queue has filled, we discard all the events it contained. */
 			/* the intent is to discard frantic clicking by the user during long latencies. */
-			w->mouse.qfull = FALSE;
+                    w->mouse.qfull = false;
 			if(w->mouse.wi != w->mouse.ri) {
 				m = w->mouse.queue[w->mouse.ri];
 				if(++w->mouse.ri == nelem(w->mouse.queue))
@@ -535,10 +536,10 @@ namecomplete(Window *w)
 	/* control-f: filename completion; works back to white space or / */
 	if(w->q0<w->nr && w->r[w->q0]>' ')	/* must be at end of word */
 		return nil;
-	nstr = windfilewidth(w, w->q0, TRUE);
+    nstr = windfilewidth(w, w->q0, true);
 	str = runemalloc(nstr);
 	runemove(str, w->r+(w->q0-nstr), nstr);
-	npath = windfilewidth(w, w->q0-nstr, FALSE);
+    npath = windfilewidth(w, w->q0-nstr, false);
 	path = runemalloc(npath);
 	runemove(path, w->r+(w->q0-nstr-npath), npath);
 	rp = nil;
@@ -604,7 +605,7 @@ wkeyctl(Window *w, Rune r)
 			n = 2*w->f.maxlines/3;
 		case_Down:
 			q0 = w->org+frcharofpt(&w->f, Pt(w->f.r.min.x, w->f.r.min.y+n*w->f.font->height));
-			wsetorigin(w, q0, TRUE);
+                    wsetorigin(w, q0, true);
 			return;
 		case Kup:
 			n = w->f.maxlines/3;
@@ -618,7 +619,7 @@ wkeyctl(Window *w, Rune r)
 			n = 2*w->f.maxlines/3;
 		case_Up:
 			q0 = wbacknl(w, w->org, n);
-			wsetorigin(w, q0, TRUE);
+                    wsetorigin(w, q0, true);
 			return;
 		case Kleft:
 			if(w->q0 > 0){
@@ -637,14 +638,14 @@ wkeyctl(Window *w, Rune r)
 		case Khome:
 			if(w->org > w->iq1) {
 				q0 = wbacknl(w, w->iq1, 1);
-				wsetorigin(w, q0, TRUE);
+                            wsetorigin(w, q0, true);
 			} else
 				wshow(w, 0);
 			return;
 		case Kend:
 			if(w->iq1 > w->org+w->f.nchars) {
 				q0 = wbacknl(w, w->iq1, 1);
-				wsetorigin(w, q0, TRUE);
+                            wsetorigin(w, q0, true);
 			} else
 				wshow(w, w->nr);
 			return;
@@ -797,7 +798,7 @@ wbswidth(Window *w, Rune c)
 	stop = 0;
 	if(q > w->qh)
 		stop = w->qh;
-	skipping = TRUE;
+    skipping = true;
 	while(q > stop){
 		r = w->r[q-1];
 		if(r == '\n'){		/* eat at most one more character */
@@ -808,7 +809,7 @@ wbswidth(Window *w, Rune c)
 		if(c == 0x17){
 			eq = isalnum(r);
 			if(eq && skipping)	/* found one; stop skipping */
-				skipping = FALSE;
+                            skipping = false;
 			else if(!eq && !skipping)
 				break;
 		}
@@ -1042,7 +1043,7 @@ wframescroll(Window *w, int dl)
 		else
 			wsetselect(w, selectq, w->org+w->f.p1);
 	}
-	wsetorigin(w, q0, TRUE);
+   wsetorigin(w, q0, true);
 }
 
 void
@@ -1203,7 +1204,7 @@ wctlmesg(Window *w, int m, Rectangle r, Image *i)
 		wclosewin(w);
 		break;
 	case Exited:
-		frclear(&w->f, TRUE);
+           frclear(&w->f, true);
 		close(w->notefd);
 		chanfree(w->mc.c);
 		chanfree(w->ck);
@@ -1340,7 +1341,7 @@ wclosewin(Window *w)
 	Rectangle r;
 	int i;
 
-	w->deleted = TRUE;
+   w->deleted = true;
 	if(w == input){
 		input = nil;
 		wsetcursor(w, 0);
@@ -1357,7 +1358,7 @@ wclosewin(Window *w)
 		if(window[i] == w){
 			--nwindow;
 			memmove(window+i, window+i+1, (nwindow-i)*sizeof(Window*));
-			w->deleted = TRUE;
+                  w->deleted = true;
 			r = w->i->r;
 			/* move it off-screen to hide it, in case client is slow in letting it go */
 			MOVEIT originwindow(w->i, r.min, view->r.max);
@@ -1521,9 +1522,9 @@ wshow(Window *w, uint q0)
 		q = wbacknl(w, q0, nl);
 		/* avoid going backwards if trying to go forwards - long lines! */
 		if(!(q0>w->org && q<w->org))
-			wsetorigin(w, q, TRUE);
+                   wsetorigin(w, q, true);
 		while(q0 > w->org+w->f.nchars)
-			wsetorigin(w, w->org+1, FALSE);
+                   wsetorigin(w, w->org+1, false);
 	}
 }
 
@@ -1702,7 +1703,7 @@ wfill(Window *w)
 			}
 		}
 		frinsert(&w->f, rp, rp+i, w->f.nchars);
-	}while(w->f.lastlinefull == FALSE);
+   }while(w->f.lastlinefull == false);
 	free(rp);
 }
 
