@@ -2,8 +2,8 @@
 #undef Borderwidth
 #define Borderwidth 0
 
-#undef TRUE	/* OS X */
-#undef FALSE
+#include <stdbool.h>
+#include <stdint.h>
 
 typedef	struct	Consreadmesg Consreadmesg;
 typedef	struct	Conswritemesg Conswritemesg;
@@ -23,8 +23,6 @@ enum
 	Scrollwid 		= 12,		/* width of scroll bar */
 	Scrollgap 		= 4,		/* gap right of scroll bar */
 	BIG			= 3,		/* factor by which window dimension can exceed screen */
-	TRUE		= 1,
-	FALSE		= 0
 };
 
 enum
@@ -200,7 +198,7 @@ void		deletetimeoutproc(void*);
 struct Timer
 {
 	int		dt;
-	int		cancel;
+        bool            cancel;
 	Channel	*c;	/* chan(int) */
 	Timer	*next;
 };

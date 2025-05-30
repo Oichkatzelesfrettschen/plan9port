@@ -10,6 +10,7 @@
 #include <keyboard.h>
 #include <frame.h>
 #include <plumb.h>
+#include <stdbool.h>
 #include <complete.h>
 #define Extern
 #include "dat.h"
@@ -80,7 +81,7 @@ threadmain(int argc, char *argv[])
 		pw = getpwuid(getuid());
 		if(pw != nil && pw->pw_shell != nil)
 			setenv("SHELL", pw->pw_shell, 1);
-		loginshell = TRUE;
+           loginshell = true;
 		//_threaddaemonize();
 	}
 
@@ -88,19 +89,19 @@ threadmain(int argc, char *argv[])
 	default:
 		usage();
 	case 'l':
-		loginshell = TRUE;
+           loginshell = true;
 		break;
 	case 'f':
 		fontname = EARGF(usage());
 		break;
 	case 's':
-		scrolling = TRUE;
+           scrolling = true;
 		break;
 	case 'c':
-		cooked = TRUE;
+           cooked = true;
 		break;
 	case 'w':	/* started from rio or 9wm */
-		use9wm = TRUE;
+           use9wm = true;
 		break;
 	case 'W':
 		winsize = EARGF(usage());
@@ -141,7 +142,7 @@ threadmain(int argc, char *argv[])
 	timerinit();
 	servedevtext();
 	rcpid = rcstart(argc, argv, &rcfd, &sfd);
-	w = new(screen, FALSE, scrolling, rcpid, ".", nil, nil);
+    w = new(screen, false, scrolling, rcpid, ".", nil, nil);
 
 	threadcreate(keyboardthread, nil, STACK);
 	threadcreate(mousethread, nil, STACK);
@@ -232,14 +233,14 @@ mousethread(void *v)
 
 	USED(v);
 
-	sending = FALSE;
+    sending = false;
 	threadsetname("mousethread");
 	while(readmouse(mousectl) >= 0){
 		if(sending){
 		Send:
 			/* send to window */
 			if(mouse->buttons == 0)
-				sending = FALSE;
+                            sending = false;
 			else
 				wsetcursor(w, 0);
 			tmp = mousectl->m;
@@ -247,7 +248,7 @@ mousethread(void *v)
 			continue;
 		}
 		if((mouse->buttons&(1|8|16)) || ptinrect(mouse->xy, w->scrollr)){
-			sending = TRUE;
+                    sending = true;
 			goto Send;
 		}else if(mouse->buttons&2)
 			button2menu(w);
