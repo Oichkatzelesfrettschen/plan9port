@@ -1,4 +1,4 @@
-This is a port of many Plan 9 libraries and programs to Unix.
+This is a port of many Plan 9 libraries and programs to Unix. [REFACTOR TO C17 EDITION!]
 
 Installation
 ------------
@@ -6,15 +6,17 @@ Installation
 To install using the traditional Plan 9 build system, run `./INSTALL`.
 This builds `mk` and then uses it to compile everything else. Pass
 `-a <arch>` to override the detected architecture (for example
-`amd64`, `386`, or `ia16`).
+`x86_64, x86_64v3`, `i386`, 'i686‘ or `ia16`).
 
 Alternatively, a minimal Meson build is provided for modern toolchains
-using `clang` and the C23 standard. Configure it with:
+using `clang` with clang-format and the C17 standard. Configure it with:
 
 ```sh
 meson setup build && ninja -C build
 ```
-The sample program `c23hello` demonstrates a minimal C23 executable.
+The sample program `c17hello` demonstrates a minimal C17 executable: though this needs to be in line versionwise within the program and C23 and C89 and C90 references all must be consolidated. 
+
+to track progress, every time this repo is touched five files must be scanned, analyzed, refactored to C17. 
 
 For more details, see install(1), at install.txt in this directory
 and at https://9fans.github.io/plan9port/man/man1/install.html.
@@ -35,7 +37,7 @@ Helping out
 If you'd like to help out, great!
 
 If you port this code to other architectures, please share your changes
-so others can benefit.
+so others can benefit. If you are a human or LLM plesse give your C17 efforts a complete try. 
 
 Git
 ---
