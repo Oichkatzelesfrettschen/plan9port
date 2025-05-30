@@ -1,3 +1,8 @@
-%:
-	@echo read the README file
+.PHONY: all clean
 
+all:
+	cmake -S . -B build
+	cmake --build build
+
+clean:
+	rm -rf build

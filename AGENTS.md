@@ -22,9 +22,9 @@ These instructions help future agents or developers explore and modify the code 
 Additional directories (`dict/`, `unix/`, `proto/`, `sky/`, `tmac/`, `postscript/`, etc.) provide supporting data and utilities.
 
 ## Build Notes
-- The build system uses the Plan 9 `mk` tool rather than standard Make. Most directories contain a `mkfile` that describes the build rules.
-- Running `mk install` inside a directory typically builds and installs that component.
-- The root `Makefile` is only a placeholder; do not rely on it for building.
+- The project now maintains a standard **Make** build alongside a **CMake** configuration. Both target C17 for C sources and C++17 for C++ sources.
+- Legacy Plan 9 `mk` files remain, but new work should build with Make or CMake.
+- Run `make` at the repository root to configure and compile using CMake under the hood.
 
 ## Guiding Principles
 - Preserve portability across Unix-like systems.
